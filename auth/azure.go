@@ -22,7 +22,7 @@ func (a *authorization) GetBearerToken() (string, error) {
 	p := authorizer.WithAuthorization()
 	req, err := autorest.CreatePreparer(p).Prepare(&r)
 	if err != nil {
-		return "", errors.New("failed to generate azure auth token")
+		return "", errors.New("failed to generate azure auth token" + err.Error())
 	}
 
 	qualifiedBearer := req.Header.Get("Authorization")
