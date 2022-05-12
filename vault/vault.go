@@ -140,6 +140,7 @@ type requestBody struct {
 	RefreshToken string `json:"refresh_token"`
 	AwsBody      string `json:"aws_body"`
 	AwsHeaders   string `json:"aws_headers"`
+	Jwt          string `json:"jwt"`
 }
 
 // getAccessToken uses the client_id and client_secret, to call the token
@@ -160,6 +161,20 @@ func (v Vault) getAccessToken() (string, error) {
 		rBody.GrantType = "aws_iam"
 		rBody.AwsHeaders = header
 		rBody.AwsBody = body
+
+	case auth.AZURE:
+		auth, err := auth.New(auth.Config{Provider: auth.AZURE})
+		if err != nil {
+			return "", err
+		}
+
+		bearer, err := auth.GetBearerToken()
+		if err != nil {
+			return "", err
+		}
+
+		rBody.GrantType = "azure"
+		rBody.Jwt = bearer
 
 	default:
 		rBody.GrantType = "client_credentials"
